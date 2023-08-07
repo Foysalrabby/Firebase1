@@ -51,6 +51,7 @@ function App() {
        isSigned:false,
        name:'',
        email:'',
+       password:'',
        photo:''
         
       }
@@ -72,9 +73,30 @@ function App() {
 
   }
 //-------------onChange={handlechange} 
+let isTwofiedValid =true;
 
-const handlechange = () => {
+const handlechange = (e) => {
 
+     console.log(e.target.name,e.target.value);
+     if(e.target.name==="email"){
+      var isTwofiedValid = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/.test(e.target.value);
+       console.log(isTwofiedValid); 
+
+     }
+
+     if(e.target.name === "password"){
+
+      var isTwofiedValid=/^(?=.*\d)(?=.*[!@#$%^&*])(?=.*[a-z])(?=.*[A-Z]).{5,}$/.test(e.target.value);
+      console.log(isTwofiedValid);
+     }
+     //towfillesd valid then isTwofiedValid take set korbo
+     if(isTwofiedValid){
+
+     const newuserinfo={...userinfo};
+     newuserinfo[e.target.name]=e.target.value; //jetatae click korbo sttar value set hobe
+     setinfo(newuserinfo); //and see to the authentication ptag
+
+     }
 
 }
 
@@ -96,8 +118,10 @@ const handlechange = () => {
       </div>
      }
      <h1> Your authentication...</h1>
+     <p>Email: {userinfo.email}</p>
+     <p>password: {userinfo.password}</p>
        <form onSubmit={handlesubmit}>
-        <input type="text" name="name" onChange={handlechange} placeholder="Enter your name" required /><br></br>
+        <input type="text" name="email" onChange={handlechange} placeholder="Enter your name" required /><br></br>
         <input type="password" name="password" onChange={handlechange}  placeholder="Enter your password" required/><br/>
         <input type="submit" value="submit" />
 
