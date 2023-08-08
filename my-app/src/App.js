@@ -3,7 +3,9 @@ import {useState} from 'react';
 import './App.css';
 import firebase, {initializeApp} from './fairbase';
 import { getAuth} from 'firebase/auth';
+import {  createUserWithEmailAndPassword } from "firebase/auth";
 import { signInWithPopup , GoogleAuthProvider} from "firebase/auth";
+import {  signInWithEmailAndPassword } from "firebase/auth";
 import {  signOut } from "firebase/auth";
 const provider = new GoogleAuthProvider();
 
@@ -12,10 +14,12 @@ const provider = new GoogleAuthProvider();
 
 
 function App() {
+  const [singupuser,setsignupser]=useState(false);
   const [userinfo,setinfo]=useState({
     isSigned: false,
     name:"",
     email:"",
+    password:"",
     photo:""
 
   });
@@ -52,7 +56,10 @@ function App() {
        name:'',
        email:'',
        password:'',
-       photo:''
+       photo:'',
+       error:'',
+       success:''
+       
         
       }
    setinfo(sinoutuser);
@@ -66,11 +73,61 @@ function App() {
     console.log("clicked");
 
   }
-  //----------------handlesubmit
+  //----------------handlesubmit to take password and gmail to sign in
 
-  const handlesubmit = () => {
+  const handlesubmit = (e) => {
 
+    if(singupuser && userinfo.email && userinfo.password){
+     
 
+      const auth = getAuth();
+      createUserWithEmailAndPassword(auth,userinfo.email, userinfo.password)
+        .then((res) => {
+
+          const newuserDISmess={...userinfo};
+          newuserDISmess.success=true;
+          newuserDISmess.error='';
+          setinfo(newuserDISmess);
+          // Signed in 
+         // const user = userCredential.user;
+          //console.log(user);
+
+          // ...
+        })
+        .catch((error) => {
+          const newuserDISmess={...userinfo};
+          newuserDISmess.success=false;
+          newuserDISmess.error=error.message;
+          //const errorCode = error.code;
+          //onst errorMessage = error.message;
+          //console.log(errorMessage);
+          setinfo(newuserDISmess);
+          // ..
+        });
+    }
+    if(!singupuser && userinfo.email && userinfo.password){
+      
+
+      const auth = getAuth();
+      signInWithEmailAndPassword(auth,userinfo.email, userinfo.password)
+        .then((res) => {
+          const newuserDISmess={...userinfo};
+          newuserDISmess.success=true;
+          newuserDISmess.error='';
+          setinfo(newuserDISmess);
+        })
+        .catch((error) => {
+          const newuserDISmess={...userinfo};
+          newuserDISmess.success=true;
+          newuserDISmess.error=error.message;
+          setinfo(newuserDISmess);
+          //const errorCode = error.code;
+          //const errorMessage = error.message;
+        });
+
+    }
+   e.preventDefault(); //jate automatic vabe submit hoy na
+  
   }
 //-------------onChange={handlechange} 
 let isTwofiedValid =true;
@@ -120,12 +177,17 @@ const handlechange = (e) => {
      <h1> Your authentication...</h1>
      <p>Email: {userinfo.email}</p>
      <p>password: {userinfo.password}</p>
+      <input type="checkbox" onChange={()=>setsignupser(!singupuser)}  name="checkbox" id="" />
+      <label>New user</label>
        <form onSubmit={handlesubmit}>
+        {singupuser && <input type="text" name="name" onChange={handlechange} placeholder="Enter your name" />} <br></br>
         <input type="text" name="email" onChange={handlechange} placeholder="Enter your name" required /><br></br>
         <input type="password" name="password" onChange={handlechange}  placeholder="Enter your password" required/><br/>
         <input type="submit" value="submit" />
 
        </form>
+       <p style={{color:'red'}}>{userinfo.error}</p>
+      {userinfo.success && <p style={{color:'green'}}>{singupuser ? "created" :"login"}</p>}
 
     </div>
   );
