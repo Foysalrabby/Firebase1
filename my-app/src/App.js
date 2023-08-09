@@ -6,6 +6,7 @@ import { getAuth} from 'firebase/auth';
 import {  createUserWithEmailAndPassword } from "firebase/auth";
 import { signInWithPopup , GoogleAuthProvider} from "firebase/auth";
 import {  signInWithEmailAndPassword } from "firebase/auth";
+import {  updateProfile } from "firebase/auth";
 import {  signOut } from "firebase/auth";
 const provider = new GoogleAuthProvider();
 
@@ -88,6 +89,7 @@ function App() {
           newuserDISmess.success=true;
           newuserDISmess.error='';
           setinfo(newuserDISmess);
+          usernameOtherinfo(newuserDISmess.name);
           // Signed in 
          // const user = userCredential.user;
           //console.log(user);
@@ -115,6 +117,7 @@ function App() {
           newuserDISmess.success=true;
           newuserDISmess.error='';
           setinfo(newuserDISmess);
+          console.log("when sign up user name and details",res.user);
         })
         .catch((error) => {
           const newuserDISmess={...userinfo};
@@ -156,7 +159,19 @@ const handlechange = (e) => {
      }
 
 }
+//to takeusername and dispaly
+const usernameOtherinfo = namex =>{
+const auth = getAuth();
+updateProfile(auth.currentUser, {
+    displayName:namex
+   
+  }).then(() => {
+    console.log("Update the name successfully");
+  }).catch((error) => {
+    console.log(error);
+  });
 
+}
 
 
   return (
@@ -181,9 +196,9 @@ const handlechange = (e) => {
       <label>New user</label>
        <form onSubmit={handlesubmit}>
         {singupuser && <input type="text" name="name" onChange={handlechange} placeholder="Enter your name" />} <br></br>
-        <input type="text" name="email" onChange={handlechange} placeholder="Enter your name" required /><br></br>
+        <input type="text" name="email" onChange={handlechange} placeholder="Enter your email" required /><br></br>
         <input type="password" name="password" onChange={handlechange}  placeholder="Enter your password" required/><br/>
-        <input type="submit" value="submit" />
+        <input type="submit" value={singupuser?"sign up" :"submit"}/>
 
        </form>
        <p style={{color:'red'}}>{userinfo.error}</p>
