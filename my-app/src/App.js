@@ -8,6 +8,9 @@ import { signInWithPopup , GoogleAuthProvider} from "firebase/auth";
 import {  signInWithEmailAndPassword } from "firebase/auth";
 import {  updateProfile } from "firebase/auth";
 import {  signOut } from "firebase/auth";
+import { FacebookAuthProvider } from "firebase/auth";
+
+const provider1 = new FacebookAuthProvider();
 const provider = new GoogleAuthProvider();
 
 
@@ -172,7 +175,36 @@ updateProfile(auth.currentUser, {
   });
 
 }
+//handle facebbok
+const handlefacbook=()=>{
 
+const auth = getAuth();
+signInWithPopup(auth, provider1)
+  .then((result) => {
+    // The signed-in user info.
+    const user = result.user;
+    console.log(user);
+
+    // This gives you a Facebook Access Token. You can use it to access the Facebook API.
+    const credential = FacebookAuthProvider.credentialFromResult(result);
+    const accessToken = credential.accessToken;
+
+    // IdP data available using getAdditionalUserInfo(result)
+    // ...
+  })
+  .catch((error) => {
+    // Handle Errors here.
+    const errorCode = error.code;
+    const errorMessage = error.message;
+    // The email of the user's account used.
+    const email = error.customData.email;
+    // The AuthCredential type that was used.
+    const credential = FacebookAuthProvider.credentialFromError(error);
+
+    // ...
+  });
+
+}
 
   return (
     <div className="App">
@@ -181,6 +213,9 @@ updateProfile(auth.currentUser, {
      <button onClick={handleuser}>Sign in</button> //like if (userinfo.isSigned == true)
      //<button onClick={handlesignout}>singnout</button>:
     }
+   {
+    <button onClick={handlefacbook}>sing in facebbok</button>
+   }
      
      {
       userinfo.isSigned && <div>
